@@ -14,6 +14,7 @@
 		8419F9F322BC871100092DFC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8419F9F122BC871100092DFC /* LaunchScreen.storyboard */; };
 		8419F9FE22BC871100092DFC /* EWPageControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419F9FD22BC871100092DFC /* EWPageControllerTests.swift */; };
 		8419FA0922BC871100092DFC /* EWPageControllerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419FA0822BC871100092DFC /* EWPageControllerUITests.swift */; };
+		8419FA1722BC87B700092DFC /* EWPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419FA1622BC87B700092DFC /* EWPageViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +48,7 @@
 		8419FA0422BC871100092DFC /* EWPageControllerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EWPageControllerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8419FA0822BC871100092DFC /* EWPageControllerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EWPageControllerUITests.swift; sourceTree = "<group>"; };
 		8419FA0A22BC871100092DFC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8419FA1622BC87B700092DFC /* EWPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EWPageViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +101,7 @@
 			children = (
 				8419F9E822BC871000092DFC /* AppDelegate.swift */,
 				8419F9EA22BC871000092DFC /* ViewController.swift */,
+				8419FA1622BC87B700092DFC /* EWPageViewController.swift */,
 				8419F9EC22BC871000092DFC /* Main.storyboard */,
 				8419F9EF22BC871100092DFC /* Assets.xcassets */,
 				8419F9F122BC871100092DFC /* LaunchScreen.storyboard */,
@@ -256,6 +259,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8419FA1722BC87B700092DFC /* EWPageViewController.swift in Sources */,
 				8419F9EB22BC871000092DFC /* ViewController.swift in Sources */,
 				8419F9E922BC871000092DFC /* AppDelegate.swift in Sources */,
 			);
