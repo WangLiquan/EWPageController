@@ -8,12 +8,27 @@
 
 import UIKit
 
+struct EWScreenInfo {
+    static let Frame = UIScreen.main.bounds
+    static let Height = Frame.height
+    static let Width = Frame.width
+    static let navigationHeight:CGFloat = navBarHeight()
+    
+    static func isIphoneX() -> Bool {
+        return UIScreen.main.bounds.equalTo(CGRect(x: 0, y: 0, width: 375, height: 812))
+    }
+    static private func navBarHeight() -> CGFloat {
+        return isIphoneX() ? 88 : 64
+    }
+}
+
+
 public enum EWViewPageTitleBarScrollStyle {
     case scroll
     case fixed
 }
 
-public enum EWViewPageTitleBarOption {
+public enum EWViewPageIndicatorBarOption {
     case height(CGFloat)
     case backgroundColor(UIColor)
     case scrollStyle(EWViewPageTitleBarScrollStyle)
@@ -80,12 +95,11 @@ fileprivate class EWPageScrollViewDelegate: NSObject, UIScrollViewDelegate {
 
 protocol EWViewPageDelegate: class {
     func titles(`for` viewpape: EWPageScrollView) -> [String]
-    func options(`for` viewpage: EWPageScrollView) -> [EWViewPageTitleBarOption]?
+    func options(`for` viewpage: EWPageScrollView) -> [EWViewPageIndicatorBarOption]?
     func pages(`for` viewPage: EWPageScrollView) -> [EWPage]
     
     func didScrollToPage(index: Int)
     /// 滚动百分比。percent<0向左滚动，percent>0向右滚动
-    func didScroll(percent: CGFloat)
     func didScrollToLeftEdge()
     func didScrollToRightEdge()
 }
@@ -132,6 +146,176 @@ class EWViewPageIndicatorBarButtonItem: UIButton {
 class EWViewPageIndicatorBar: UIView {
     fileprivate weak var delegate: EWViewpageIndicatorBarDelegate?
     
+    private let contentView = UIScrollView()
+    
+    ///滑块
+    private let indicatorContainer = UIView()
+    private let indicator = UIView() //??
+    private var indicatorColor = UIColor.gray
+    private var indicatorTitles = [String]()
+    private var indicatorBackgroundColor = UIColor.white
+    private var indicatorHeight: CGFloat = 8.0
+    private var indicatorBottom: CGFloat = 0.0
+   
+    /// Bar底部线
+    private let bottomline = UIView()
+    private var bottomlineColor = UIColor.blue
+    private var bottomlineHeight: CGFloat = 5.0
+    private var bottomlinePaddingLeft: CGFloat = 0.0
+    private var bottomlinePaddingRight: CGFloat = 0.0
+    
+    /// Bar本身的属性
+    private var barHeight: CGFloat = 50.0
+    private var paddingLeft: CGFloat = 0.0
+    private var paddingRight: CGFloat = 0.0
+    private var paddingTop: CGFloat = 0.0
+    /// BarItem是可以滚动的还是固定的
+    private var scrollStyle = EWViewPageTitleBarScrollStyle.fixed
+    /// BarItem
+    private var barItemTitleFont = UIFont.systemFont(ofSize: 17)
+    private var barItemTitleSelectedFont = UIFont.systemFont(ofSize: 17)
+    private var barItemWidth: CGFloat = 100.0
+    private var barItemTitleColor = UIColor.black
+    private var barItemTitleSelectedColor = UIColor.blue
+    
+    private var buttonItems = [EWViewPageIndicatorBarButtonItem]()
+    private var curIndex = 0
+    private var itemCount = 0
+    
+    func setUp(with options: [EWViewPageIndicatorBarOption], titles: [String]) {
+        
+    }
+    private func parse(options: [EWViewPageIndicatorBarOption], itemCount: Int) {
+        for option in options {
+            switch (option) {
+            case let .height(value):
+                self.barHeight = value
+            case let .backgroundColor(value):
+                self.backgroundColor = value
+            case let .scrollStyle(value):
+                self.scrollStyle = value
+            case let .barPaddingleft(value):
+                self.paddingLeft = value
+            case let .barPaddingRight(value):
+                self.paddingRight = value
+            case let .barPaddingTop(value):
+                self.paddingTop = value
+            case let .barItemTitleFont(value):
+                self.barItemTitleFont = value
+            case let .barItemTitleSelectedFont(value):
+                self.barItemTitleSelectedFont = value
+            case let .barItemTitleColor(value):
+                self.barItemTitleColor = value
+            case let .barItemTitleSelectedColor(value):
+                self.barItemTitleSelectedColor = value
+            case let .barItemWidth(value):
+                self.barItemWidth = value
+            case let .indicatorColor(value):
+                self.indicatorColor = value
+            case let .indicatorHeight(value):
+                self.indicatorHeight = value
+            case let .indicatorBottom(value):
+                self.indicatorBottom = value
+            case let .bottomlineColor(value):
+                self.bottomlineColor = value
+            case let .bottomlineHeight(value):
+                self.bottomlineHeight = value
+            case let .bottomlinePaddingLeft(value):
+                self.bottomlinePaddingLeft = value
+            case let .bottomlinePaddingRight(value):
+                self.bottomlinePaddingRight = value
+            }
+        }
+        self.itemCount = itemCount
+        switch scrollStyle {
+        case .fixed:
+            self.barItemWidth = (EWScreenInfo.Width-paddingLeft-paddingRight)/CGFloat(itemCount)
+        case .scroll: break
+        }
+    }
+    func setUpUIElement(with titles: [String]) {
+        self.addSubview(contentView)
+        contentView.frame = CGRect(x: paddingLeft, y: paddingTop, width: UIScreen.main.bounds.width-paddingLeft-paddingRight, height: barHeight-paddingTop)
+        contentView.backgroundColor = UIColor.clear
+        self.frame = CGRect(x: 0, y: EWScreenInfo.navigationHeight, width: EWScreenInfo.Width, height: barHeight)
+        contentView.contentSize = CGSize(width: barItemWidth*CGFloat(titles.count), height: barHeight-paddingTop)
+        
+        for (index, title) in titles.enumerated() {
+            let buttonItem = EWViewPageIndicatorBarButtonItem()
+            buttonItem.backgroundColor = UIColor.clear
+            buttonItem.titleLabel?.font = barItemTitleFont
+            buttonItem.setTitle(title, for: .normal)
+            buttonItem.titleLabel?.textAlignment = .center
+            buttonItem.titleLabel?.sizeToFit()
+            buttonItem.setTitleColor(barItemTitleColor, for: .normal)
+            buttonItem.tag = index
+            buttonItem.frame = CGRect(x: CGFloat(index)*barItemWidth, y: 0, width: barItemWidth, height: barHeight-paddingTop)
+            buttonItem.addTarget(self, action: #selector(onClickTitle(_:)), for: .touchUpInside)
+            buttonItems.append(buttonItem)
+            contentView.addSubview(buttonItem)
+        }
+        
+        bottomline.frame = CGRect(x: bottomlinePaddingLeft,
+                                  y: barHeight - bottomlineHeight,
+                                  width: EWScreenInfo.Width - bottomlinePaddingLeft - bottomlinePaddingRight,
+                                  height: bottomlineHeight / UIScreen.main.scale * 2)
+        bottomline.backgroundColor = bottomlineColor
+        self.addSubview(bottomline)
+        
+        indicatorContainer.frame = CGRect(x: 0,
+                                          y: barHeight - paddingTop - 6 - indicatorBottom,
+                                          width: barItemWidth,
+                                          height: indicatorHeight)
+        indicatorContainer.addSubview(indicator)
+        indicator.backgroundColor = indicatorColor
+        contentView.addSubview(indicatorContainer)
+        self.setNeedsLayout()
+        self.layoutIfNeeded()
+    }
+    @objc func onClickTitle(_ title: UIControl) {
+        let index = Int(title.tag)
+        self.delegate?.didClickedIndicatorItem(index: index)
+        scrollIndicator(to: index)
+    }
+    public func scrollIndicator(to index: Int, animated: Bool = true) {
+        let range = 0..<buttonItems.count
+        guard range.contains(index) else { return }
+        var offsetX = CGFloat(index) * barItemWidth + barItemWidth/2
+        offsetX = offsetX - contentView.frame.width/2
+        offsetX = min(offsetX,contentView.contentSize.width - contentView.frame.width)
+        offsetX = max(offsetX,0)
+        contentView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: true)
+        
+        let originalItem = buttonItems[curIndex]
+        originalItem.setTitleColor(barItemTitleColor, for: .normal)
+        originalItem.titleLabel?.font = barItemTitleFont
+        curIndex = index
+        let currentItem = buttonItems[curIndex]
+        currentItem.setTitleColor(barItemTitleSelectedColor, for: .normal)
+        currentItem.titleLabel?.font = barItemTitleFont
+        
+        UIView.animate(withDuration: animated ? 0.2 : 0) {
+            self.indicatorContainer.frame = CGRect(x: CGFloat(index) * self.barItemWidth,
+                                                   y: self.barHeight - self.paddingTop - self.indicatorHeight,
+                                                   width: self.barItemWidth,
+                                                   height: self.indicatorHeight)
+            if let titleLabel = currentItem.titleLabel {
+                if titleLabel.frame.width != 0 {
+                    self.indicator.frame = CGRect(x: titleLabel.frame.origin.x,
+                                                  y: 0,
+                                                  width: titleLabel.frame.width,
+                                                  height: self.indicatorHeight)
+                }
+            }else {
+                self.indicator.frame = self.indicatorContainer.frame
+            }
+        }
+    }
+    
+}
+
+class EWPageViewController: UIViewController {
+
     private var _titles = [String]()
     var titles: [String] {
         return _titles
@@ -149,18 +333,58 @@ class EWViewPageIndicatorBar: UIView {
             return _curIndex
         }
     }
-}
-
-class EWPageViewController: UIViewController {
-
+    
+    private let scrollDelegate = EWPageScrollViewDelegate()
+    private var indicatorBar = EWViewPageIndicatorBar()
+    
+    private var autoScrollIndicator = true
+    var scrollEnable = true
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        _curIndex = defaultPageIndex()
         // Do any additional setup after loading the view.
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.view.setNeedsLayout()
     }
+    
+    func defaultPageIndex() -> Int {
+        return 0
+    }
+}
 
+extension EWPageViewController: EWViewPageDelegate {
+    func titles(for viewpape: EWPageScrollView) -> [String] {
+        <#code#>
+    }
+    
+    func options(for viewpage: EWPageScrollView) -> [EWViewPageIndicatorBarOption]? {
+        <#code#>
+    }
+    
+    func pages(for viewPage: EWPageScrollView) -> [EWPage] {
+        <#code#>
+    }
+    
+    func didScrollToPage(index: Int) {
+        <#code#>
+    }
+    
+    func didScrollToLeftEdge() {
+        <#code#>
+    }
+    
+    func didScrollToRightEdge() {
+        <#code#>
+    }
+    
+    
+}
+extension EWPageViewController: EWViewpageIndicatorBarDelegate {
+    func didClickedIndicatorItem(index: Int) {
+        <#code#>
+    }
+    
 }
