@@ -22,7 +22,6 @@ struct EWScreenInfo {
     }
 }
 
-
 public enum EWViewPageTitleBarScrollStyle {
     case scroll
     case fixed
@@ -56,7 +55,6 @@ fileprivate class EWPageScrollViewDelegate: NSObject, UIScrollViewDelegate {
     var whenScrollToLeftEdge: (()->())?
     var whenScrollToRightEdge: (()->())?
     var whenScrollToPageIndex: ((_ index: Int)->())?
-    var whenScrollPercent: ((_ percent: CGFloat)->())?
     
     override init() {
         super.init()
@@ -82,7 +80,6 @@ fileprivate class EWPageScrollViewDelegate: NSObject, UIScrollViewDelegate {
             print("newScrollView")
             return
         }
-        self.whenScrollPercent?(scrollView.contentOffset.x)
         let bottomEdge = scrollView.contentOffset.x + scrollView.frame.size.width
         if (bottomEdge >= scrollView.contentSize.width && bottomEdge == startRight) {
             self.whenScrollToLeftEdge?()
@@ -99,7 +96,6 @@ protocol EWViewPageDelegate: class {
     func pages(`for` viewPage: EWPageScrollView) -> [EWPage]
     
     func didScrollToPage(index: Int)
-    /// 滚动百分比。percent<0向左滚动，percent>0向右滚动
     func didScrollToLeftEdge()
     func didScrollToRightEdge()
 }
@@ -333,6 +329,7 @@ class EWPageViewController: UIViewController {
             return _curIndex
         }
     }
+    var autoSetupUI: Bool = true
     
     private let scrollDelegate = EWPageScrollViewDelegate()
     private var indicatorBar = EWViewPageIndicatorBar()
@@ -343,11 +340,66 @@ class EWPageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         _curIndex = defaultPageIndex()
-        // Do any additional setup after loading the view.
+        if autoSetupUI {
+            self.setupUI()
+        }
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.view.setNeedsLayout()
+    }
+    open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        self.indicatorBar.scrollIndicator(to: curIndex, animated: false)
+        viewPage.scrollToPage(index: curIndex)
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        autoScrollIndicator = false
+    }
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if autoScrollIndicator {
+            self.indicatorBar.scrollIndicator(to: curIndex, animated: false)
+        }
+    }
+    func setupUI() {
+        _viewPage = EWPageScrollView()
+        _viewPage.bounces = false
+        _viewPage.isScrollEnabled = scrollEnable
+        self._titles = self.titles(for: self._viewPage)
+        if let options = self.options(for: self._viewPage) {
+            self.indicatorBar.setUp(with: options, titles: titles)
+        }
+        self.indicatorBar.delegate = self
+        self.view.addSubview(indicatorBar)
+        
+        let viewPageFrame = CGRect(x: 0,
+                                   y: self.indicatorBar.frame.origin.y + self.indicatorBar.frame.height,
+                                   width: self.view.frame.width,
+                                   height: self.view.frame.height - EWScreenInfo.navigationHeight - self.indicatorBar.frame.height)
+        _viewPage.frame = viewPageFrame
+        _viewPage.setup(with: self.pages(for: self._viewPage))
+        _viewPage.pages.forEach({ viewPage.addSubview($0.view); self.addChild($0)})
+        _viewPage.scrollToPage(index: _curIndex, animation: false)
+        scrollDelegate.scrollView = _viewPage
+        _viewPage.delegate = scrollDelegate
+        _viewPage.isPagingEnabled = true
+        _viewPage.showsHorizontalScrollIndicator = false
+        self.view.addSubview(_viewPage)
+        
+        self.scrollDelegate.whenScrollToLeftEdge = { [weak self] in
+            self?.didScrollToLeftEdge()
+        }
+        self.scrollDelegate.whenScrollToRightEdge = { [weak self] in
+            self?.didScrollToRightEdge()
+        }
+        self.scrollDelegate.whenScrollToPageIndex = { [weak self] index in
+            self?._curIndex = index
+            self?.didScrollToPage(index: index)
+            self?._viewPage.scrollToPage(index: index)
+            self?.indicatorBar.scrollIndicator(to: index)
+        }
     }
     
     func defaultPageIndex() -> Int {
@@ -357,34 +409,32 @@ class EWPageViewController: UIViewController {
 
 extension EWPageViewController: EWViewPageDelegate {
     func titles(for viewpape: EWPageScrollView) -> [String] {
-        <#code#>
+        fatalError("请覆盖该方法")
     }
     
     func options(for viewpage: EWPageScrollView) -> [EWViewPageIndicatorBarOption]? {
-        <#code#>
+        fatalError("请覆盖该方法")
     }
     
     func pages(for viewPage: EWPageScrollView) -> [EWPage] {
-        <#code#>
+        fatalError("请覆盖该方法")
     }
     
     func didScrollToPage(index: Int) {
-        <#code#>
+        fatalError("请覆盖该方法")
     }
     
     func didScrollToLeftEdge() {
-        <#code#>
+        fatalError("请覆盖该方法")
     }
     
     func didScrollToRightEdge() {
-        <#code#>
+        fatalError("请覆盖该方法")
     }
-    
-    
 }
 extension EWPageViewController: EWViewpageIndicatorBarDelegate {
     func didClickedIndicatorItem(index: Int) {
-        <#code#>
+        _viewPage.scrollToPage(index: index)
+        self.didScrollToPage(index: index)
     }
-    
 }
