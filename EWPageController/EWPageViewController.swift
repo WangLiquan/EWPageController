@@ -179,7 +179,8 @@ class EWViewPageIndicatorBar: UIView {
     private var itemCount = 0
     
     func setUp(with options: [EWViewPageIndicatorBarOption], titles: [String]) {
-        
+        parse(options: options, itemCount: titles.count)
+        setUpUIElement(with: titles)
     }
     private func parse(options: [EWViewPageIndicatorBarOption], itemCount: Int) {
         for option in options {
@@ -310,7 +311,7 @@ class EWViewPageIndicatorBar: UIView {
     
 }
 
-class EWPageViewController: UIViewController {
+class EWPageViewController: UIViewController, EWViewPageDelegate, EWViewpageIndicatorBarDelegate {
 
     private var _titles = [String]()
     var titles: [String] {
@@ -405,9 +406,6 @@ class EWPageViewController: UIViewController {
     func defaultPageIndex() -> Int {
         return 0
     }
-}
-
-extension EWPageViewController: EWViewPageDelegate {
     func titles(for viewpape: EWPageScrollView) -> [String] {
         fatalError("请覆盖该方法")
     }
@@ -431,10 +429,9 @@ extension EWPageViewController: EWViewPageDelegate {
     func didScrollToRightEdge() {
         fatalError("请覆盖该方法")
     }
-}
-extension EWPageViewController: EWViewpageIndicatorBarDelegate {
     func didClickedIndicatorItem(index: Int) {
         _viewPage.scrollToPage(index: index)
         self.didScrollToPage(index: index)
     }
+
 }

@@ -8,13 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		8419F9E922BC871000092DFC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419F9E822BC871000092DFC /* AppDelegate.swift */; };
-		8419F9EB22BC871000092DFC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419F9EA22BC871000092DFC /* ViewController.swift */; };
 		8419F9EE22BC871000092DFC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8419F9EC22BC871000092DFC /* Main.storyboard */; };
 		8419F9F022BC871100092DFC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8419F9EF22BC871100092DFC /* Assets.xcassets */; };
 		8419F9F322BC871100092DFC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8419F9F122BC871100092DFC /* LaunchScreen.storyboard */; };
 		8419F9FE22BC871100092DFC /* EWPageControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419F9FD22BC871100092DFC /* EWPageControllerTests.swift */; };
 		8419FA0922BC871100092DFC /* EWPageControllerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419FA0822BC871100092DFC /* EWPageControllerUITests.swift */; };
 		8419FA1722BC87B700092DFC /* EWPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419FA1622BC87B700092DFC /* EWPageViewController.swift */; };
+		8419FA1922C4512700092DFC /* EWFirstViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419FA1822C4512700092DFC /* EWFirstViewController.swift */; };
+		8419FA1B22C4514000092DFC /* EWSecondViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419FA1A22C4514000092DFC /* EWSecondViewController.swift */; };
+		8419FA1D22C4518200092DFC /* EWExampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419FA1C22C4518200092DFC /* EWExampleViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,7 +39,6 @@
 /* Begin PBXFileReference section */
 		8419F9E522BC871000092DFC /* EWPageController.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EWPageController.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8419F9E822BC871000092DFC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		8419F9EA22BC871000092DFC /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		8419F9ED22BC871000092DFC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8419F9EF22BC871100092DFC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8419F9F222BC871100092DFC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -49,6 +50,9 @@
 		8419FA0822BC871100092DFC /* EWPageControllerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EWPageControllerUITests.swift; sourceTree = "<group>"; };
 		8419FA0A22BC871100092DFC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8419FA1622BC87B700092DFC /* EWPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EWPageViewController.swift; sourceTree = "<group>"; };
+		8419FA1822C4512700092DFC /* EWFirstViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EWFirstViewController.swift; sourceTree = "<group>"; };
+		8419FA1A22C4514000092DFC /* EWSecondViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EWSecondViewController.swift; sourceTree = "<group>"; };
+		8419FA1C22C4518200092DFC /* EWExampleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EWExampleViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,8 +104,10 @@
 			isa = PBXGroup;
 			children = (
 				8419F9E822BC871000092DFC /* AppDelegate.swift */,
-				8419F9EA22BC871000092DFC /* ViewController.swift */,
 				8419FA1622BC87B700092DFC /* EWPageViewController.swift */,
+				8419FA1822C4512700092DFC /* EWFirstViewController.swift */,
+				8419FA1A22C4514000092DFC /* EWSecondViewController.swift */,
+				8419FA1C22C4518200092DFC /* EWExampleViewController.swift */,
 				8419F9EC22BC871000092DFC /* Main.storyboard */,
 				8419F9EF22BC871100092DFC /* Assets.xcassets */,
 				8419F9F122BC871100092DFC /* LaunchScreen.storyboard */,
@@ -260,8 +266,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				8419FA1722BC87B700092DFC /* EWPageViewController.swift in Sources */,
-				8419F9EB22BC871000092DFC /* ViewController.swift in Sources */,
+				8419FA1D22C4518200092DFC /* EWExampleViewController.swift in Sources */,
 				8419F9E922BC871000092DFC /* AppDelegate.swift in Sources */,
+				8419FA1922C4512700092DFC /* EWFirstViewController.swift in Sources */,
+				8419FA1B22C4514000092DFC /* EWSecondViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
