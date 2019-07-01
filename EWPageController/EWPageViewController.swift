@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+/// 界面信息宏定义
 struct EWScreenInfo {
     static let Frame = UIScreen.main.bounds
     static let Height = Frame.height
@@ -50,42 +50,34 @@ public enum EWViewPageIndicatorBarOption {
 
 fileprivate class EWPageScrollViewDelegate: NSObject, UIScrollViewDelegate {
     weak var scrollView: UIScrollView?
+    /// scrollView当前展示左侧x位置
     var startLeft: CGFloat = 0.0
+    /// scrollView当前展示右侧x位置
     var startRight: CGFloat = 0.0
+    /// 当scrollView滚动到最左侧
     var whenScrollToLeftEdge: (()->())?
     var whenScrollToRightEdge: (()->())?
     var whenScrollToPageIndex: ((_ index: Int)->())?
     
-    override init() {
-        super.init()
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+    /// scrollView开始滚动
+    fileprivate func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         guard self.scrollView == scrollView else {
-            print("newScrollView")
+            print("new ScrollView")
             return
         }
         startLeft = scrollView.contentOffset.x
         startRight = scrollView.contentOffset.x + scrollView.frame.size.width
     }
-    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    /// scrollView滚动减速
+    fileprivate func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         guard self.scrollView == scrollView else { return }
-        self.whenScrollToPageIndex?(Int(scrollView.contentOffset.x/scrollView.frame.size.width))
-    }
-    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard self.scrollView == scrollView else {
-            print("newScrollView")
-            return
-        }
         let bottomEdge = scrollView.contentOffset.x + scrollView.frame.size.width
-        if (bottomEdge >= scrollView.contentSize.width && bottomEdge == startRight) {
+        if (bottomEdge == scrollView.contentSize.width && bottomEdge == startRight) {
             self.whenScrollToLeftEdge?()
-        }
-        if (scrollView.contentOffset.x == 0 && startLeft == 0) {
+        } else if (scrollView.contentOffset.x == 0 && startLeft == 0) {
             self.whenScrollToRightEdge?()
+        } else {
+            self.whenScrollToPageIndex?(Int(scrollView.contentOffset.x/scrollView.frame.size.width))
         }
     }
 }

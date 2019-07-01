@@ -43,9 +43,9 @@ class EWExampleViewController: EWPageViewController {
         print(index)
     }
     override func didScrollToLeftEdge() {
-        
+        print("left")
     }
     override func didScrollToRightEdge() {
-        
+        print("right")
     }
 }

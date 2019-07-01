@@ -16,12 +16,11 @@ class EWSecondViewController: UIViewController {
     }
     
     private func drawMyView() {
-        self.view.backgroundColor = UIColor.red
-        let titleLabel = UILabel(frame: CGRect(x: 0, y: 300, width: EWScreenInfo.Width, height: 200))
+        self.view.backgroundColor = UIColor.brown
+        let titleLabel = UILabel(frame: CGRect(x: 0, y: 200, width: EWScreenInfo.Width, height: 200))
         titleLabel.text = "第二页"
         titleLabel.textAlignment = .center
-        titleLabel.font = UIFont.systemFont(ofSize: 20)
+        titleLabel.font = UIFont.systemFont(ofSize: 40)
         self.view.addSubview(titleLabel)
     }
-
 }
