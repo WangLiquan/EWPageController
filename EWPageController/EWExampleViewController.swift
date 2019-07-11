@@ -15,7 +15,7 @@ class EWExampleViewController: EWPageViewController {
         self.title = "Example"
     }
     override func titles(for viewpage: EWPageScrollView) -> [String] {
-        return ["第一页","第二页"]
+        return ["第一页","第二页","第三页","第四页"]
     }
     override func options(for viewpage: EWPageScrollView) -> [EWViewPageIndicatorBarOption]? {
         let pageOptions: [EWViewPageIndicatorBarOption] = [
@@ -36,7 +36,7 @@ class EWExampleViewController: EWPageViewController {
         return pageOptions
     }
     override func pages(for viewPage: EWPageScrollView) -> [EWPage] {
-        return [EWFirstViewController(), EWSecondViewController()]
+        return [EWSubViewController(text: "第一页"),EWSubViewController(text: "第二页"),EWSubViewController(text: "第三页"),EWSubViewController(text: "第四页")]
     }
     override func didScrollToPage(index: Int) {
         print(index)

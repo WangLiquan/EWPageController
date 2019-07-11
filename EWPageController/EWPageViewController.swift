@@ -425,6 +425,4 @@ class EWPageViewController: UIViewController, EWViewPageDelegate, EWViewpageIndi
     func didScrollToRightEdge() {
         fatalError("请覆盖该方法")
     }
-
-
 }
