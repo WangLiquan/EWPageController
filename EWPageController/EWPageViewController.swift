@@ -13,7 +13,7 @@ struct EWScreenInfo {
     static let Height = Frame.height
     static let Width = Frame.width
     static let navigationHeight:CGFloat = navBarHeight()
-    
+
     static func isIphoneX() -> Bool {
         return UIScreen.main.bounds.equalTo(CGRect(x: 0, y: 0, width: 375, height: 812))
     }
@@ -57,19 +57,19 @@ public enum EWViewPageIndicatorBarOption {
     case bottomlinePaddingRight(CGFloat)
 }
 /// 为滚动bar上的scrollview添加delegate，获取bar的滚动状态
-fileprivate class EWPageScrollViewDelegate: NSObject, UIScrollViewDelegate {
+private class EWPageScrollViewDelegate: NSObject, UIScrollViewDelegate {
     weak var scrollView: UIScrollView?
     /// scrollView当前展示左侧x位置
     var startLeft: CGFloat = 0.0
     /// scrollView当前展示右侧x位置
     var startRight: CGFloat = 0.0
     /// 当scrollView滚动到最左侧
-    var whenScrollToLeftEdge: (()->())?
+    var whenScrollToLeftEdge: (() -> Void)?
     /// 当scrollView滚动到最右侧
-    var whenScrollToRightEdge: (()->())?
+    var whenScrollToRightEdge: (() -> Void)?
     /// 当scrollView滚动某一page
-    var whenScrollToPageIndex: ((_ index: Int)->())?
-    
+    var whenScrollToPageIndex: ((_ index: Int) -> Void)?
+
     /// scrollView开始滚动，UIScrollViewDelegate中的方法
     fileprivate func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         guard self.scrollView == scrollView else { return }
@@ -82,7 +82,7 @@ fileprivate class EWPageScrollViewDelegate: NSObject, UIScrollViewDelegate {
         guard self.scrollView == scrollView else { return }
         /// 获取滚动结束时右侧边的x
         let lastEdge = scrollView.contentOffset.x + scrollView.frame.size.width
-        
+
         if (lastEdge == scrollView.contentSize.width && lastEdge == startRight) {
             /// 如果滚动结束时lastEdge等于scrollView.contentSize.width且 lastEdge等于startRight。相当于scrollView已经滚动到了最右边，并且这次操作并有没有滚动
             self.whenScrollToRightEdge?()
@@ -100,7 +100,7 @@ protocol EWViewPageDelegate: class {
     func titles(for viewpage: EWPageScrollView) -> [String]
     func options(for viewpage: EWPageScrollView) -> [EWViewPageIndicatorBarOption]?
     func pages(for viewPage: EWPageScrollView) -> [EWPage]
-    
+
     func didScrollToPage(index: Int)
     func didScrollToLeftEdge()
     func didScrollToRightEdge()
@@ -117,7 +117,7 @@ class EWPageScrollView: UIScrollView {
     fileprivate var pages: [EWPage] {
         return _pages
     }
-    
+
     fileprivate func setup(with pages: [EWPage]) {
         _pages = pages
         self.contentSize = CGSize(width: CGFloat(pages.count) * (self.frame.width), height: 0)
@@ -139,12 +139,12 @@ class EWPageScrollView: UIScrollView {
 }
 /// bar上的button类，有需要自定制功能在这拓展
 class EWViewPageIndicatorBarButtonItem: UIButton {
-    
+
 }
 /// 上方滚动bar
 class EWViewPageIndicatorBar: UIView {
     fileprivate weak var delegate: EWViewpageIndicatorBarDelegate?
-    
+
     private let contentView = UIScrollView()
     /// 滑块
     private let indicatorContainer = UIView() ///和barItem一样宽的透明View
@@ -171,11 +171,11 @@ class EWViewPageIndicatorBar: UIView {
     private var barItemWidth: CGFloat = 100.0
     private var barItemTitleColor = UIColor.black
     private var barItemTitleSelectedColor = UIColor.blue
-    
+
     private var buttonItems = [EWViewPageIndicatorBarButtonItem]()
     private var curIndex = 0
     private var itemCount = 0
-    
+
     func setUp(with options: [EWViewPageIndicatorBarOption], titles: [String]) {
         parse(options: options, itemCount: titles.count)
         setUpUIElement(with: titles)
@@ -222,14 +222,14 @@ class EWViewPageIndicatorBar: UIView {
         /// barItemWidth自适应
         self.barItemWidth = (EWScreenInfo.Width-paddingLeft-paddingRight)/CGFloat(itemCount)
     }
-    
+
     private func setUpUIElement(with titles: [String]) {
         self.addSubview(contentView)
         contentView.frame = CGRect(x: paddingLeft, y: paddingTop, width: UIScreen.main.bounds.width-paddingLeft-paddingRight, height: barHeight-paddingTop)
         contentView.backgroundColor = UIColor.clear
         self.frame = CGRect(x: 0, y: EWScreenInfo.navigationHeight, width: EWScreenInfo.Width, height: barHeight)
         contentView.contentSize = CGSize(width: barItemWidth*CGFloat(titles.count), height: barHeight-paddingTop)
-        
+
         for (index, title) in titles.enumerated() {
             let buttonItem = EWViewPageIndicatorBarButtonItem()
             buttonItem.backgroundColor = UIColor.clear
@@ -244,14 +244,14 @@ class EWViewPageIndicatorBar: UIView {
             buttonItems.append(buttonItem)
             contentView.addSubview(buttonItem)
         }
-        
+
         bottomline.frame = CGRect(x: bottomlinePaddingLeft,
                                   y: barHeight - bottomlineHeight,
                                   width: EWScreenInfo.Width - bottomlinePaddingLeft - bottomlinePaddingRight,
                                   height: bottomlineHeight / UIScreen.main.scale * 2)
         bottomline.backgroundColor = bottomlineColor
         self.addSubview(bottomline)
-        
+
         indicatorContainer.frame = CGRect(x: 0,
                                           y: barHeight - paddingTop - 6 - indicatorBottom,
                                           width: barItemWidth,
@@ -273,11 +273,11 @@ class EWViewPageIndicatorBar: UIView {
         let range = 0..<buttonItems.count
         guard range.contains(index) else { return }
         var offsetX = CGFloat(index) * barItemWidth + barItemWidth/2
-        offsetX = offsetX - contentView.frame.width/2
+        offsetX -= contentView.frame.width/2
         offsetX = min(offsetX,contentView.contentSize.width - contentView.frame.width)
         offsetX = max(offsetX,0)
         contentView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: true)
-        
+
         let originalItem = buttonItems[curIndex]
         originalItem.setTitleColor(barItemTitleColor, for: .normal)
         originalItem.titleLabel?.font = barItemTitleFont
@@ -298,12 +298,12 @@ class EWViewPageIndicatorBar: UIView {
                                                   width: titleLabel.frame.width,
                                                   height: self.indicatorHeight)
                 }
-            }else {
+            } else {
                 self.indicator.frame = self.indicatorContainer.frame
             }
         }
     }
-    
+
 }
 
 class EWPageViewController: UIViewController, EWViewPageDelegate, EWViewpageIndicatorBarDelegate {
@@ -326,13 +326,13 @@ class EWPageViewController: UIViewController, EWViewPageDelegate, EWViewpageIndi
             return _curIndex
         }
     }
-    
+
     private let scrollDelegate = EWPageScrollViewDelegate()
     private var indicatorBar = EWViewPageIndicatorBar()
     /// 通过这个属性保证滚动滑块的显示
     private var autoScrollIndicator = true
     var scrollEnable = true
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         _curIndex = defaultPageIndex()
@@ -362,14 +362,14 @@ class EWPageViewController: UIViewController, EWViewPageDelegate, EWViewpageIndi
         _viewPage = EWPageScrollView()
         _viewPage.bounces = false
         _viewPage.isScrollEnabled = scrollEnable
-        
+
         self._titles = self.titles(for: self._viewPage)
         if let options = self.options(for: self._viewPage) {
             self.indicatorBar.setUp(with: options, titles: titles)
         }
         self.indicatorBar.delegate = self
         self.view.addSubview(indicatorBar)
-        
+
         let viewPageFrame = CGRect(x: 0,
                                    y: self.indicatorBar.frame.origin.y + self.indicatorBar.frame.height,
                                    width: self.view.frame.width,
@@ -383,7 +383,7 @@ class EWPageViewController: UIViewController, EWViewPageDelegate, EWViewpageIndi
         _viewPage.isPagingEnabled = true
         _viewPage.showsHorizontalScrollIndicator = false
         self.view.addSubview(_viewPage)
-        
+
         self.scrollDelegate.whenScrollToLeftEdge = { [weak self] in
             self?.didScrollToLeftEdge()
         }
@@ -406,7 +406,7 @@ class EWPageViewController: UIViewController, EWViewPageDelegate, EWViewpageIndi
     func defaultPageIndex() -> Int {
         return 0
     }
-    //MARK:  外部调用方法,必须override
+    // MARK: 外部调用方法,必须override
     func titles(for viewpape: EWPageScrollView) -> [String] {
         fatalError("请覆盖该方法")
     }
