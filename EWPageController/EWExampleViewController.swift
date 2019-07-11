@@ -14,14 +14,13 @@ class EWExampleViewController: EWPageViewController {
         super.viewDidLoad()
         self.title = "Example"
     }
-    override func titles(for viewpape: EWPageScrollView) -> [String] {
+    override func titles(for viewpage: EWPageScrollView) -> [String] {
         return ["第一页","第二页"]
     }
     override func options(for viewpage: EWPageScrollView) -> [EWViewPageIndicatorBarOption]? {
         let pageOptions: [EWViewPageIndicatorBarOption] = [
             .height(52),
             .backgroundColor(UIColor.white),
-            .scrollStyle(.fixed),
             .barPaddingleft(0),
             .barPaddingRight(0),
             .barItemTitleFont(UIFont.systemFont(ofSize: 15)),
