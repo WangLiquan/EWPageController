@@ -97,12 +97,17 @@ private class EWPageScrollViewDelegate: NSObject, UIScrollViewDelegate {
 }
 /// 外部继承delegate方法
 protocol EWViewPageDelegate: class {
+    /// 子控制器title数组
     func titles(for viewpage: EWPageScrollView) -> [String]
+    /// 子控制器titleBar设置UI参数
     func options(for viewpage: EWPageScrollView) -> [EWViewPageIndicatorBarOption]?
+    /// 子控制器页面
     func pages(for viewPage: EWPageScrollView) -> [EWPage]
-
+    /// 当前滚动至页面index
     func didScrollToPage(index: Int)
+    /// 滚动至最左边控制器后仍左滑
     func didScrollToLeftEdge()
+    /// 滚动至最右边控制器后仍右滑
     func didScrollToRightEdge()
 }
 /// 点击滚动bar标题delegate方法
